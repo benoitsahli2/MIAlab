@@ -28,7 +28,7 @@ class ImageNormalization(pymia_fltr.Filter):
 
         img_arr = sitk.GetArrayFromImage(image)
 
-        # todo: normalize the image using numpy
+        # TODO: normalize the image using numpy
         warnings.warn('No normalization implemented. Returning unprocessed image.')
 
         img_out = sitk.GetImageFromArray(img_arr)
@@ -73,14 +73,37 @@ class SkullStripping(pymia_fltr.Filter):
             params (SkullStrippingParameters): The parameters with the brain mask.
 
         Returns:
-            sitk.Image: The normalized image.
+            sitk.Image: The skull-stripped image.
         """
-        mask = params.img_mask  # the brain mask
+        mask = None if params is None else getattr(params, 'img_mask', None)
 
-        # todo: remove the skull from the image by using the brain mask
-        warnings.warn('No skull-stripping implemented. Returning unprocessed image.')
+        # validate mask
+        if mask is None:
+            raise ValueError('SkullStripping requires a brain mask in params.img_mask.')
 
-        return image
+        # if geometries differ, resample mask to image geometry (nearest neighbor to preserve labels)
+        try:
+            if (mask.GetSize() != image.GetSize()
+                    or mask.GetOrigin() != image.GetOrigin()
+                    or mask.GetSpacing() != image.GetSpacing()
+                    or mask.GetDirection() != image.GetDirection()):
+                mask = sitk.Resample(mask,
+                                     image,
+                                     sitk.Transform(),
+                                     sitk.sitkNearestNeighbor,
+                                     0,
+                                     mask.GetPixelID())
+        except Exception:
+            warnings.warn('Mask resampling failed; continuing with provided mask.')
+
+        # binarize mask: treat any non-zero voxel as brain
+        mask_bin = sitk.BinaryThreshold(mask, lowerThreshold=1, upperThreshold=65535, insideValue=1, outsideValue=0)
+
+        # apply mask: set voxels outside the brain to zero
+        img_masked = sitk.Mask(image, mask_bin, outsideValue=0)
+        img_masked.CopyInformation(image)
+
+        return img_masked
 
     def __str__(self):
         """Gets a printable string representation.
@@ -126,7 +149,7 @@ class ImageRegistration(pymia_fltr.Filter):
             sitk.Image: The registered image.
         """
 
-        # todo: replace this filter by a registration. Registration can be costly, therefore, we provide you the
+        # TODO: replace this filter by a registration. Registration can be costly, therefore, we provide you the
         # transformation, which you only need to apply to the image!
         warnings.warn('No registration implemented. Returning unregistered image')
 

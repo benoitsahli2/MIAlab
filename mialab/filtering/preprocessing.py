@@ -6,6 +6,7 @@ import warnings
 
 import pymia.filtering.filter as pymia_fltr
 import SimpleITK as sitk
+import numpy as np
 
 
 class ImageNormalization(pymia_fltr.Filter):
@@ -27,11 +28,29 @@ class ImageNormalization(pymia_fltr.Filter):
         """
 
         img_arr = sitk.GetArrayFromImage(image)
+        # Benoit 31.10 DONE 
+        # perform z-score normalization on non-zero voxels to preserve background
+        mask_nonzero = img_arr != 0
 
-        # TODO: normalize the image using numpy
-        warnings.warn('No normalization implemented. Returning unprocessed image.')
+        # if no non-zero voxels, nothing to normalize
+        if not np.any(mask_nonzero):
+            warnings.warn('Image appears empty (all zeros). Returning unprocessed image.')
+            return image
 
-        img_out = sitk.GetImageFromArray(img_arr)
+        # compute mean/std on non-zero voxels
+        nonzero_vals = img_arr[mask_nonzero].astype(np.float64)
+        mean = nonzero_vals.mean()
+        std = nonzero_vals.std()
+
+        if std == 0 or np.isclose(std, 0.0):
+            warnings.warn('Standard deviation is zero; returning unprocessed image.')
+            return image
+
+        # normalize in-place on a float copy
+        img_arr_norm = img_arr.astype(np.float32, copy=True)
+        img_arr_norm[mask_nonzero] = (img_arr_norm[mask_nonzero] - mean) / std
+
+        img_out = sitk.GetImageFromArray(img_arr_norm)
         img_out.CopyInformation(image)
 
         return img_out

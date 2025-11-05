@@ -8,6 +8,8 @@ import os
 import sys
 import timeit
 import warnings
+import traceback
+import logging
 
 import SimpleITK as sitk
 import sklearn.ensemble as sk_ensemble
@@ -22,9 +24,19 @@ try:
 except ImportError:
     # Append the MIALab root directory to Python path
     sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), '..'))
-    import mialab.data.structure as structure
-    import mialab.utilities.file_access_utilities as futil
-    import mialab.utilities.pipeline_utilities as putil
+    try:
+        import mialab.data.structure as structure
+        import mialab.utilities.file_access_utilities as futil
+        import mialab.utilities.pipeline_utilities as putil
+    except ImportError as ie:
+        print("ImportError: impossible d'importer les modules 'mialab'.")
+        print("Chemins essayés (sys.path):")
+        for p in sys.path:
+            print("  ", p)
+        print("Erreur:", ie)
+        # afficher suggestion courte
+        print("Vérifiez que le dossier MIALab est présent et/ou mettez-le dans PYTHONPATH.")
+        raise
 
 LOADING_KEYS = [structure.BrainImageTypes.T1w,
                 structure.BrainImageTypes.T2w,
@@ -190,5 +202,38 @@ if __name__ == "__main__":
         help='Directory with testing data.'
     )
 
+    parser.add_argument(
+        '--debug',
+        action='store_true',
+        help='If set, print full traceback on error.'
+    )
+
     args = parser.parse_args()
-    main(args.result_dir, args.data_atlas_dir, args.data_train_dir, args.data_test_dir)
+
+    # configure logging minimal
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
+
+    try:
+        main(args.result_dir, args.data_atlas_dir, args.data_train_dir, args.data_test_dir)
+    except Exception as e:
+        # message concis en français
+        print("\nUne erreur est survenue :", str(e))
+        print("Relancez avec --debug pour afficher la trace complète.")
+        # write a traceback to error.log inside result_dir (or cwd if non existant)
+        log_dir = args.result_dir if args and args.result_dir else os.getcwd()
+        try:
+            os.makedirs(log_dir, exist_ok=True)
+            log_path = os.path.join(log_dir, 'error.log')
+            with open(log_path, 'a') as f:
+                f.write('\n---\n')
+                f.write('Time: {}\n'.format(datetime.datetime.now().isoformat()))
+                traceback.print_exc(file=f)
+            print("Trace d'erreur écrite dans :", log_path)
+        except Exception:
+            # si écriture échoue, ne rien faire
+            pass
+
+        if args.debug:
+            traceback.print_exc()
+
+        sys.exit(1)

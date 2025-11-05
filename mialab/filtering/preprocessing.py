@@ -167,7 +167,7 @@ class ImageRegistration(pymia_fltr.Filter):
         Returns:
             sitk.Image: The registered image.
         """
-        print("Hello it's me ELia testing if i'm on anotther branch and writing from preprocessing")
+        print("Hello it's me ELia testing from pre pross tes1")
         # TODO: replace this filter by a registration. Registration can be costly, therefore, we provide you the
         # transformation, which you only need to apply to the image!
         warnings.warn('No registration implemented. Returning unregistered image')

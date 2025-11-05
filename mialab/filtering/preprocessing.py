@@ -8,10 +8,7 @@ import pymia.filtering.filter as pymia_fltr
 import SimpleITK as sitk
 import numpy as np
 
-# benoit, push 5.11.25
-# benoit test branch
-# Benoit test
-#elia test push 1 
+
 class ImageNormalization(pymia_fltr.Filter):
     """Represents a normalization filter."""
 
@@ -31,7 +28,6 @@ class ImageNormalization(pymia_fltr.Filter):
         """
 
         img_arr = sitk.GetArrayFromImage(image)
-        # Benoit 31.10 DONE 
         # perform z-score normalization on non-zero voxels to preserve background
         mask_nonzero = img_arr != 0
 
@@ -170,7 +166,6 @@ class ImageRegistration(pymia_fltr.Filter):
         Returns:
             sitk.Image: The registered image.
         """
-        print("Hello it's me ELia testing from pre pross tes1")
         # TODO: replace this filter by a registration. Registration can be costly, therefore, we provide you the
         # transformation, which you only need to apply to the image!
         warnings.warn('No registration implemented. Returning unregistered image')

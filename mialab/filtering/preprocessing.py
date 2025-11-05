@@ -8,6 +8,7 @@ import pymia.filtering.filter as pymia_fltr
 import SimpleITK as sitk
 import numpy as np
 
+# benoit test branch
 
 class ImageNormalization(pymia_fltr.Filter):
     """Represents a normalization filter."""

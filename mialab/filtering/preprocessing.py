@@ -10,6 +10,7 @@ import numpy as np
 
 # benoit test branch
 
+# Benoit test
 class ImageNormalization(pymia_fltr.Filter):
     """Represents a normalization filter."""
 

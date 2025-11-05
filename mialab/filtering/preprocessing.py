@@ -166,15 +166,8 @@ class ImageRegistration(pymia_fltr.Filter):
         Returns:
             sitk.Image: The registered image.
         """
-        # TODO: replace this filter by a registration. Registration can be costly, therefore, we provide you the
-        # transformation, which you only need to apply to the image!
-        warnings.warn('No registration implemented. Returning unregistered image')
-
-        atlas = params.atlas
-        transform = params.transformation
-        is_ground_truth = params.is_ground_truth  # the ground truth will be handled slightly different
-
-        # Validate params
+        # Apply the provided transformation to map the input image into the atlas space.
+        # Validate params first before accessing attributes.
         if params is None:
             raise ValueError('ImageRegistration requires params with atlas and transformation.')
 
@@ -188,10 +181,12 @@ class ImageRegistration(pymia_fltr.Filter):
         # Choose interpolation and output pixel type
         if is_ground_truth:
             interpolator = sitk.sitkNearestNeighbor
-            out_pixel_id = image.GetPixelID()  # preserve label pixel type
+            out_pixel_id = image.GetPixelID()
+            default_background = 0
         else:
             interpolator = sitk.sitkLinear
-            out_pixel_id = sitk.sitkFloat32  # keep intensities as float to avoid truncation
+            out_pixel_id = sitk.sitkFloat32
+            default_background = 0.0
 
         # Perform resampling: map input image into atlas space using provided transform
         try:
@@ -199,14 +194,18 @@ class ImageRegistration(pymia_fltr.Filter):
                                       atlas,
                                       transform,
                                       interpolator,
-                                      0.0,
+                                      default_background,
                                       out_pixel_id)
         except Exception as e:
             warnings.warn(f'Resampling (registration) failed; returning original image. Error: {e}')
             return image
 
         # Ensure spatial metadata matches atlas (Resample already uses atlas geometry, but ensure consistency)
-        resampled.CopyInformation(atlas)
+        try:
+            resampled.CopyInformation(atlas)
+        except Exception:
+            # CopyInformation may fail for some image types; ignore to keep result usable
+            pass
 
         return resampled
 

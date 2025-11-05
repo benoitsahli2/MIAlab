@@ -9,6 +9,7 @@ import SimpleITK as sitk
 import numpy as np
 
 
+# Benoit test
 class ImageNormalization(pymia_fltr.Filter):
     """Represents a normalization filter."""
 

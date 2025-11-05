@@ -8,6 +8,7 @@ import pymia.filtering.filter as pymia_fltr
 import SimpleITK as sitk
 import numpy as np
 
+# benoit test branch
 
 # Benoit test
 class ImageNormalization(pymia_fltr.Filter):
@@ -168,6 +169,14 @@ class ImageRegistration(pymia_fltr.Filter):
         Returns:
             sitk.Image: The registered image.
         """
+        print("Hello it's me ELia testing from pre pross tes1")
+        # TODO: replace this filter by a registration. Registration can be costly, therefore, we provide you the
+        # transformation, which you only need to apply to the image!
+        warnings.warn('No registration implemented. Returning unregistered image')
+
+        atlas = params.atlas
+        transform = params.transformation
+        is_ground_truth = params.is_ground_truth  # the ground truth will be handled slightly different
 
         # Validate params
         if params is None:

@@ -11,6 +11,7 @@ import numpy as np
 # benoit, push 5.11.25
 # benoit test branch
 # Benoit test
+#elia test push 1 
 class ImageNormalization(pymia_fltr.Filter):
     """Represents a normalization filter."""
 

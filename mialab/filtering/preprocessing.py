@@ -176,11 +176,41 @@ class ImageRegistration(pymia_fltr.Filter):
         transform = params.transformation
         is_ground_truth = params.is_ground_truth  # the ground truth will be handled slightly different
 
-        # note: if you are interested in registration, and want to test it, have a look at
-        # pymia.filtering.registration.MultiModalRegistration. Think about the type of registration, i.e.
-        # do you want to register to an atlas or inter-subject? Or just ask us, we can guide you ;-)
+        # Validate params
+        if params is None:
+            raise ValueError('ImageRegistration requires params with atlas and transformation.')
 
-        return image
+        atlas = getattr(params, 'atlas', None)
+        transform = getattr(params, 'transformation', None)
+        is_ground_truth = getattr(params, 'is_ground_truth', False)
+
+        if atlas is None or transform is None:
+            raise ValueError('ImageRegistration requires both params.atlas and params.transformation.')
+
+        # Choose interpolation and output pixel type
+        if is_ground_truth:
+            interpolator = sitk.sitkNearestNeighbor
+            out_pixel_id = image.GetPixelID()  # preserve label pixel type
+        else:
+            interpolator = sitk.sitkLinear
+            out_pixel_id = sitk.sitkFloat32  # keep intensities as float to avoid truncation
+
+        # Perform resampling: map input image into atlas space using provided transform
+        try:
+            resampled = sitk.Resample(image,
+                                      atlas,
+                                      transform,
+                                      interpolator,
+                                      0.0,
+                                      out_pixel_id)
+        except Exception as e:
+            warnings.warn(f'Resampling (registration) failed; returning original image. Error: {e}')
+            return image
+
+        # Ensure spatial metadata matches atlas (Resample already uses atlas geometry, but ensure consistency)
+        resampled.CopyInformation(atlas)
+
+        return resampled
 
     def __str__(self):
         """Gets a printable string representation.

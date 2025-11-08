@@ -29,7 +29,7 @@ class ImagePostProcessing(pymia_fltr.Filter):
             sitk.Image: The post-processed image.
         """
 
-        # todo: replace this filter by a post-processing - or do we need post-processing at all?
+        # TODO: replace this filter by a post-processing - or do we need post-processing at all?
         warnings.warn('No post-processing implemented. Can you think about something?')
 
         return image

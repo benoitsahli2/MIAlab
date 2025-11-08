@@ -38,7 +38,6 @@ def load_atlas_images(directory: str):
 
 class FeatureImageTypes(enum.Enum):
     """Represents the feature image types."""
-
     ATLAS_COORD = 1
     T1w_INTENSITY = 2
     T1w_GRADIENT_INTENSITY = 3
@@ -67,7 +66,7 @@ class FeatureExtractor:
         Returns:
             structure.BrainImage: The image with extracted features.
         """
-        # todo: add T2w features
+        # TODO: add T2w features
         warnings.warn('No features from T2-weighted image extracted.')
 
         if self.coordinates_feature:
@@ -290,7 +289,7 @@ def init_evaluator() -> eval_.Evaluator:
 
     # initialize metrics
     metrics = [metric.DiceCoefficient()]
-    # todo: add hausdorff distance, 95th percentile (see metric.HausdorffDistance)
+    # TODO: add hausdorff distance, 95th percentile (see metric.HausdorffDistance)
     warnings.warn('Initialized evaluation with the Dice coefficient. Do you know other suitable metrics?')
 
     # define the labels to evaluate

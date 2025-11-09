@@ -55,6 +55,30 @@ def main():
     # Display the plot
     plt.show()
 
+    # 2) Autres métriques si disponibles dans le CSV
+    # noms typiques avec pymia:
+    metric_columns = {
+        'HDRFDST95': "Hausdorff 95 (mm)",
+        'SENS': "Sensitivity",
+        'PREC': "Precision",
+        'VOLSMTY': "Volume similarity",
+    }
+
+    for col, pretty_name in metric_columns.items():
+        if col in df.columns:
+            plt.figure(figsize=(12, 6))
+            sns.boxplot(x='LABEL', y=col, data=df)
+            plt.title(f'{pretty_name} by Anatomical Structure')
+            plt.xlabel('Anatomical Structure')
+            plt.ylabel(pretty_name)
+            plt.tight_layout()
+            out_name = f'boxplot_{col}.png'
+            plt.savefig(os.path.join(save_dir, out_name), dpi=300, bbox_inches='tight')
+            plt.show()
+        else:
+            # juste pour debug éventuel en console, pas obligatoire
+            print(f"Column '{col}' not found in results.csv (skipping).")
+
 
 if __name__ == '__main__':
     main()

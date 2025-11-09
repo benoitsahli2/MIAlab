@@ -290,11 +290,13 @@ def init_evaluator() -> eval_.Evaluator:
     Returns:
         eval.Evaluator: An evaluator.
     """
-
+    # DONE by Benoit: add hausdorff distance, 95th percentile (see metric.HausdorffDistance)
     # initialize metrics
-    metrics = [metric.DiceCoefficient()]
-    # TODO: add hausdorff distance, 95th percentile (see metric.HausdorffDistance)
-    warnings.warn('No other evaluation than the Dice coefficient. Do you know other suitable metrics?')
+    metrics = [
+        metric.DiceCoefficient(),                 # overlap 
+        metric.HausdorffDistance(percentile=95),  # the standard HD is too sensitive to noise or small spurious predictions, many studies prefer the 95th percentile Hausdorff Distance (HD95), which ignores extreme outliers.
+        metric.AverageDistance()                  # average surface distance (ASD-like)
+    ]
 
     # define the labels to evaluate
     labels = {1: 'WhiteMatter',

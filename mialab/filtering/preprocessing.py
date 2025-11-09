@@ -8,7 +8,7 @@ import pymia.filtering.filter as pymia_fltr
 import SimpleITK as sitk
 import numpy as np
 
-
+# DONE by Benoit : Image Normalization is implemented here but I'm not sure if it's correct.
 class ImageNormalization(pymia_fltr.Filter):
     """Represents a normalization filter."""
 
@@ -75,7 +75,7 @@ class SkullStrippingParameters(pymia_fltr.FilterParams):
         """
         self.img_mask = img_mask
 
-
+# DONE by Benoit  : Skull Stripping is implemented here but I'm not sure if it's correct.
 class SkullStripping(pymia_fltr.Filter):
     """Represents a skull-stripping filter."""
 
@@ -148,7 +148,7 @@ class ImageRegistrationParameters(pymia_fltr.FilterParams):
         self.transformation = transformation
         self.is_ground_truth = is_ground_truth
 
-
+# DONE by Benoit  : Image Resgistration is implemented here but I'm not sure if it's correct.
 class ImageRegistration(pymia_fltr.Filter):
     """Represents a registration filter."""
 

@@ -44,6 +44,16 @@ def main():
     plt.ylabel('DICE Score')
     # Adjust layout to prevent label cutoff
     plt.tight_layout()
+
+    # Get the directory of the latest results
+    save_dir = os.path.dirname(latest_csv)
+    save_path = os.path.join(save_dir, 'dice_scores_boxplot.png')
+    
+    # Save the figure as PNG
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    print(f"Figure saved as: {save_path}")
+    
+    # Display the plot
     plt.show()
 
 

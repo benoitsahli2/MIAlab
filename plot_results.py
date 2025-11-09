@@ -25,9 +25,8 @@ def main():
     # Load CSV
     df = pd.read_csv(latest_csv,  sep=';')
 
-    print(df) # without the string method, Pandas will only return the first 5 rows, and the last 5 rows
-    # print(df.shape) # df is size 100x3
-    #print(df.to_string())  # print all the rows
+    # print(df)                 # print the first 5 rows, and the last 5 rows
+    # print(df.to_string())     # print all the rows
 
     # Create a figure with larger size for better visibility
     plt.figure(figsize=(12, 6))

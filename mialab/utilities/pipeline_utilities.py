@@ -291,19 +291,26 @@ def init_evaluator() -> eval_.Evaluator:
         eval.Evaluator: An evaluator.
     """
 
-    # initialize metrics
-    metrics = [metric.DiceCoefficient()]
-    # TODO: add hausdorff distance, 95th percentile (see metric.HausdorffDistance)
-    warnings.warn('No other evaluation than the Dice coefficient. Do you know other suitable metrics?')
+    # --- initialize metrics ---
+    # We add different metrics to compare evaluation methods
+    metrics = [
+        metric.DiceCoefficient(),                                # overlap between regions
+        metric.HausdorffDistance(percentile=95, metric='HDRFDST95'),  # boundary distance
+        metric.Sensitivity(),                                    # true positive rate
+        metric.Precision(),                                      # how many predicted are correct
+        metric.VolumeSimilarity()                                # compares volume sizes
+    ]
 
-    # define the labels to evaluate
-    labels = {1: 'WhiteMatter',
-              2: 'GreyMatter',
-              3: 'Hippocampus',
-              4: 'Amygdala',
-              5: 'Thalamus'
-              }
+    # --- define the labels to evaluate ---
+    labels = {
+        1: 'WhiteMatter',
+        2: 'GreyMatter',
+        3: 'Hippocampus',
+        4: 'Amygdala',
+        5: 'Thalamus'
+    }
 
+    # --- create evaluator object ---
     evaluator = eval_.SegmentationEvaluator(metrics, labels)
     return evaluator
 

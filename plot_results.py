@@ -43,8 +43,6 @@ def main():
 
     save_dir = os.path.dirname(latest_csv)
     plot_box(df, 'LABEL', 'DICE', 'Distribution of DICE Scores by Anatomical Structure (higher is better)', 'DICE Score', save_dir, 'dice_scores_boxplot.png')
-    plot_box(df, 'LABEL', 'HDRFDST', 'Distribution of Hausdorff Distance by Anatomical Structure (lower is better)', 'Hausdorff Distance', save_dir, 'HD_scores_boxplot.png')
-    plot_box(df, 'LABEL', 'AVGDIST', 'Distribution of ASD by Anatomical Structure (lower is better)', 'Average Surface Distance', save_dir, 'ASD_scores_boxplot.png')
 
 
 
@@ -52,10 +50,11 @@ def main():
     # 2) Autres métriques si disponibles dans le CSV
     # noms typiques avec pymia:
     metric_columns = {
-        'HDRFDST95': "Hausdorff 95 (mm)",
-        'SENS': "Sensitivity",
-        'PREC': "Precision",
+        'HDRFDST95': "Hausdorff 95 (lower is better)",
+        'SNSVTY': "Sensitivity",
+        'PRCISON': "Precision",
         'VOLSMTY': "Volume similarity",
+        'AVGDIST': "Average Surface Distance (lower is better)",
     }
 
     for col, pretty_name in metric_columns.items():

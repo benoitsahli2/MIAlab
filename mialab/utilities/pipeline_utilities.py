@@ -290,22 +290,27 @@ def init_evaluator() -> eval_.Evaluator:
     Returns:
         eval.Evaluator: An evaluator.
     """
-    # DONE by Benoit: add hausdorff distance, 95th percentile (see metric.HausdorffDistance)
-    # initialize metrics
+
+    # --- initialize metrics ---
+    # We add different metrics to compare evaluation methods
     metrics = [
-        metric.DiceCoefficient(),                 # overlap 
-        metric.HausdorffDistance(percentile=95),  # the standard HD is too sensitive to noise or small spurious predictions, many studies prefer the 95th percentile Hausdorff Distance (HD95), which ignores extreme outliers.
-        metric.AverageDistance()                  # average surface distance (ASD-like)
+        metric.DiceCoefficient(),                                # overlap between regions
+        metric.HausdorffDistance(percentile=95, metric='HDRFDST95'),  # boundary distance
+        metric.Sensitivity(),                                    # true positive rate
+        metric.Precision(),                                      # how many predicted are correct
+        metric.VolumeSimilarity()                                # compares volume sizes
     ]
 
-    # define the labels to evaluate
-    labels = {1: 'WhiteMatter',
-              2: 'GreyMatter',
-              3: 'Hippocampus',
-              4: 'Amygdala',
-              5: 'Thalamus'
-              }
+    # --- define the labels to evaluate ---
+    labels = {
+        1: 'WhiteMatter',
+        2: 'GreyMatter',
+        3: 'Hippocampus',
+        4: 'Amygdala',
+        5: 'Thalamus'
+    }
 
+    # --- create evaluator object ---
     evaluator = eval_.SegmentationEvaluator(metrics, labels)
     return evaluator
 

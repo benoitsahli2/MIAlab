@@ -294,12 +294,13 @@ def init_evaluator() -> eval_.Evaluator:
     # --- initialize metrics ---
     # We add different metrics to compare evaluation methods
     metrics = [
-        metric.DiceCoefficient(),                                # overlap between regions
-        metric.HausdorffDistance(percentile=95, metric='HDRFDST95'),  # boundary distance
-        metric.Sensitivity(),                                    # true positive rate
-        metric.Precision(),                                      # how many predicted are correct
-        metric.VolumeSimilarity(),                                # compares volume sizes
-        metric.AverageDistance()                                 # average surface distance (ASD)
+        metric.DiceCoefficient(),                                       # overlap between regions
+        metric.HausdorffDistance(),                                        # boundary distance
+        metric.HausdorffDistance(percentile=95, metric='HDRFDST95'),    # boundary distance
+        metric.Sensitivity(),                                           # true positive rate
+        metric.Precision(),                                             # how many predicted are correct
+        metric.VolumeSimilarity(),                                      # compares volume sizes
+        metric.AverageDistance()                                        # average surface distance (ASD)
     ]
 
     # --- define the labels to evaluate ---

@@ -51,6 +51,7 @@ def main():
     # noms typiques avec pymia:
     metric_columns = {
         'HDRFDST95': "Hausdorff 95 (lower is better)",
+        'HDRFDST': "Hausdorff (lower is better)",
         'SNSVTY': "Sensitivity",
         'PRCISON': "Precision",
         'VOLSMTY': "Volume similarity",

@@ -16,6 +16,7 @@ def plot_box(df, x, y, title, ylabel, save_dir, filename):
     save_path = os.path.join(save_dir, filename)
     plt.savefig(save_path, dpi=300, bbox_inches='tight')
     print(f"Figure saved as: {save_path}")
+    # plt.show()
     plt.close() 
 
 
@@ -38,40 +39,17 @@ def main():
     # Load CSV
     df = pd.read_csv(latest_csv,  sep=';')
 
-    print(df)                 # print the first 5 rows, and the last 5 rows
+    print(df)                 # print a summary, the first 5 rows, and the last 5 rows
     # print(df.to_string())     # print all the rows
 
     save_dir = os.path.dirname(latest_csv)
     plot_box(df, 'LABEL', 'DICE', 'Distribution of DICE Scores by Anatomical Structure (higher is better)', 'DICE Score', save_dir, 'dice_scores_boxplot.png')
-
-
-
-
-    # 2) Autres métriques si disponibles dans le CSV
-    # noms typiques avec pymia:
-    metric_columns = {
-        'HDRFDST95': "Hausdorff 95 (lower is better)",
-        'HDRFDST': "Hausdorff (lower is better)",
-        'SNSVTY': "Sensitivity",
-        'PRCISON': "Precision",
-        'VOLSMTY': "Volume similarity",
-        'AVGDIST': "Average Surface Distance (lower is better)",
-    }
-
-    for col, pretty_name in metric_columns.items():
-        if col in df.columns:
-            plt.figure(figsize=(12, 6))
-            sns.boxplot(x='LABEL', y=col, data=df)
-            plt.title(f'{pretty_name} by Anatomical Structure')
-            plt.xlabel('Anatomical Structure')
-            plt.ylabel(pretty_name)
-            plt.tight_layout()
-            out_name = f'boxplot_{col}.png'
-            plt.savefig(os.path.join(save_dir, out_name), dpi=300, bbox_inches='tight')
-            plt.show()
-        else:
-            # juste pour debug éventuel en console, pas obligatoire
-            print(f"Column '{col}' not found in results.csv (skipping).")
+    plot_box(df, 'LABEL', 'HDRFDST95', 'Distribution of Hausdorff 95 Scores by Anatomical Structure (lower is better)', 'Hausdorff 95 Score', save_dir, 'hausdorff95_scores_boxplot.png')
+    plot_box(df, 'LABEL', 'HDRFDST', 'Distribution of Hausdorff Scores by Anatomical Structure (lower is better)', 'Hausdorff Score', save_dir, 'hausdorff_scores_boxplot.png')
+    plot_box(df, 'LABEL', 'SNSVTY', 'Distribution of Sensitivity Scores by Anatomical Structure (higher is better?)', 'Sensitivity Score', save_dir, 'sensitivity_scores_boxplot.png')
+    plot_box(df, 'LABEL', 'PRCISON', 'Distribution of Precision Scores by Anatomical Structure (higher is better?)', 'Precision Score', save_dir, 'precision_scores_boxplot.png')
+    plot_box(df, 'LABEL', 'VOLSMTY', 'Distribution of Volume Similarity Scores by Anatomical Structure (higher is better?)', 'Volume Similarity Score', save_dir, 'volume_similarity_scores_boxplot.png')
+    plot_box(df, 'LABEL', 'AVGDIST', 'Distribution of Average Surface Distance Scores by Anatomical Structure (lower is better)', 'Average Surface Distance Score', save_dir, 'average_surface_distance_scores_boxplot.png')
 
 
 if __name__ == '__main__':
